@@ -98,6 +98,7 @@ enum WorkbenchLayoutClasses {
 interface IInitialFilesToOpen {
 	filesToOpenOrCreate?: IPath[];
 	filesToDiff?: IPath[];
+	filesToMerge?: IPath[];
 }
 
 export abstract class Layout extends Disposable implements IWorkbenchLayoutService {
@@ -278,7 +279,7 @@ export abstract class Layout extends Disposable implements IWorkbenchLayoutServi
 		this._register(this.hostService.onDidChangeFocus(e => this.onWindowFocusChanged(e)));
 	}
 
-	private onMenubarToggled(visible: boolean) {
+	private onMenubarToggled(visible: boolean): void {
 		if (visible !== this.windowState.runtime.menuBar.toggled) {
 			this.windowState.runtime.menuBar.toggled = visible;
 
@@ -638,10 +639,10 @@ export abstract class Layout extends Disposable implements IWorkbenchLayoutServi
 			};
 		}
 
-		// Then check for files to open, create or diff from main side
-		const { filesToOpenOrCreate, filesToDiff } = this.environmentService;
-		if (filesToOpenOrCreate || filesToDiff) {
-			return { filesToOpenOrCreate, filesToDiff };
+		// Then check for files to open, create or diff/merge from main side
+		const { filesToOpenOrCreate, filesToDiff, filesToMerge } = this.environmentService;
+		if (filesToOpenOrCreate || filesToDiff || filesToMerge) {
+			return { filesToOpenOrCreate, filesToDiff, filesToMerge };
 		}
 
 		return undefined;

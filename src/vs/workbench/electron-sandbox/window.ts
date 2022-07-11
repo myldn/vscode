@@ -821,13 +821,18 @@ export class NativeWindow extends Disposable {
 	private async onOpenFiles(request: INativeOpenFileRequest): Promise<void> {
 		const inputs: Array<IResourceEditorInput | IUntitledTextResourceEditorInput> = [];
 		const diffMode = !!(request.filesToDiff && (request.filesToDiff.length === 2));
+		const mergeMode = !!(request.filesToMerge && (request.filesToMerge.length >= 3));
 
-		if (!diffMode && request.filesToOpenOrCreate) {
+		if (!diffMode && !mergeMode && request.filesToOpenOrCreate) {
 			inputs.push(...(await pathsToEditors(request.filesToOpenOrCreate, this.fileService)));
 		}
 
 		if (diffMode && request.filesToDiff) {
 			inputs.push(...(await pathsToEditors(request.filesToDiff, this.fileService)));
+		}
+
+		if (mergeMode && request.filesToMerge) {
+			inputs.push(...(await pathsToEditors(request.filesToMerge, this.fileService)));
 		}
 
 		if (inputs.length) {
